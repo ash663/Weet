@@ -4,6 +4,7 @@ package com.weet.weet;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.support.v4.view.PagerAdapter;
+import android.support.v4.view.PagerTitleStrip;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
 import android.util.SparseArray;
@@ -207,7 +208,11 @@ public class SlidingTabLayout extends HorizontalScrollView {
             if (i == mViewPager.getCurrentItem()) {
                 tabView.setSelected(true);
             }
+
+            //tabTitleView.setTextColor(getResources().getColorStateList(R.selector));
+            //tabTitleView.setTextSize(14);
         }
+
     }
 
     public void setContentDescription(int i, String desc) {
