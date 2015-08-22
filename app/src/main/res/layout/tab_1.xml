@@ -1,16 +1,39 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
         android:layout_width="match_parent"
-        android:layout_height="match_parent">
+        android:layout_height="match_parent"><![CDATA[
      
      
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:textAppearance="?android:attr/textAppearanceMedium"
-            android:text="Meetup in restaurants"
-            android:id="@+id/textView"
-            android:layout_centerVertical="true"
+        
+
+
+
+
+
+
+
+     
+
+
+
+
+
+    ]]>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="@string/existGrp"
+        android:id="@+id/existGrp"
+        android:layout_marginTop="191dp"
+        android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true" />
-     
-    </RelativeLayout>
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/newGrp"
+        android:text="@string/newGrp"
+        android:layout_below="@+id/existGrp"
+        android:layout_centerHorizontal="true" />
+</RelativeLayout>

@@ -1,5 +1,8 @@
 package com.weet.weet;
 
+import android.annotation.TargetApi;
+import android.app.Activity;
+import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
@@ -7,6 +10,8 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.Window;
+import android.view.WindowManager;
 
 public class Home extends ActionBarActivity {
     Toolbar toolbar;
@@ -16,11 +21,15 @@ public class Home extends ActionBarActivity {
     CharSequence Titles[]={"Restaurant","Outside"};
     int Numboftabs = 2;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         // Creating The Toolbar and setting it as the Toolbar for the activity
+
+
+        getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
@@ -47,7 +56,6 @@ public class Home extends ActionBarActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
-
 
     }
 
