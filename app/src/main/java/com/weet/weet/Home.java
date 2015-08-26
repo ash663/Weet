@@ -6,14 +6,23 @@ import android.os.Build;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
-import android.view.Window;
-import android.view.WindowManager;
+
+
+import com.parse.Parse;
+import com.digits.sdk.android.Digits;
+import com.twitter.sdk.android.core.TwitterAuthConfig;
+import com.twitter.sdk.android.core.TwitterCore;
+import io.fabric.sdk.android.Fabric;
 
 public class Home extends ActionBarActivity {
+
+    // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    private static final String TWITTER_KEY = "nlJ7tLT11SkWGvxJZIWAWiXfu";
+    private static final String TWITTER_SECRET = "O2TOJhQ39MQ3mTuUvl2hY8LfS08bQw9Fspm3MvQc5sA8j5R5WL";
+
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
@@ -25,12 +34,14 @@ public class Home extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
+        Fabric.with(this, new TwitterCore(authConfig), new Digits());
         setContentView(R.layout.activity_home);
-        // Creating The Toolbar and setting it as the Toolbar for the activity
 
-
+        //Setting statusBar color to ColorPrimaryDark
         getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 
+        // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
 
@@ -56,6 +67,12 @@ public class Home extends ActionBarActivity {
 
         // Setting the ViewPager For the SlidingTabsLayout
         tabs.setViewPager(pager);
+
+        // Enable Local Datastore.
+        Parse.enableLocalDatastore(this);
+
+        Parse.initialize(this, "TAtlc8CTlKZamlNni9egRbIJrWra8r50etoUiQbf", "oKmiR42goQnGM0FW6cQX1E6BCmv8glqacfV5SSNI");
+
 
     }
 
