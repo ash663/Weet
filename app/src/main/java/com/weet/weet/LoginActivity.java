@@ -4,23 +4,13 @@ package com.weet.weet;
 import android.content.Intent;
 
 import android.os.Bundle;
-import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
 
 import com.digits.sdk.android.AuthCallback;
-import com.digits.sdk.android.Digits;
 import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
-import com.parse.ParseException;
-import com.parse.ParseUser;
-import com.parse.SignUpCallback;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
-
-
-import io.fabric.sdk.android.Fabric;
 
 
 public class LoginActivity extends BaseActivity {
@@ -32,7 +22,7 @@ public class LoginActivity extends BaseActivity {
         super.onCreate(savedInstanceState);
 
         setContentView(R.layout.activity_login);
-
+        setTitle(R.string.app_name);
         //Setting statusBar color to ColorPrimaryDark
         getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 
@@ -78,6 +68,10 @@ public class LoginActivity extends BaseActivity {
             }
         });
 
+    }
+
+    protected void onStop() {
+        super.onStop();
     }
 
 
