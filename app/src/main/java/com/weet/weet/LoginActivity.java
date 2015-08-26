@@ -23,16 +23,14 @@ import com.twitter.sdk.android.core.TwitterCore;
 import io.fabric.sdk.android.Fabric;
 
 
-public class LoginActivity extends ActionBarActivity {
+public class LoginActivity extends BaseActivity {
 
-    private static final String TWITTER_KEY = "nlJ7tLT11SkWGvxJZIWAWiXfu";
-    private static final String TWITTER_SECRET = "O2TOJhQ39MQ3mTuUvl2hY8LfS08bQw9Fspm3MvQc5sA8j5R5WL";
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
-        Fabric.with(this, new TwitterCore(authConfig), new Digits());
+
         setContentView(R.layout.activity_login);
 
         //Setting statusBar color to ColorPrimaryDark
