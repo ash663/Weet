@@ -66,9 +66,9 @@ public class Home extends BaseActivity  {
         tabs.setViewPager(pager);
 
         // Enable Local Datastore.
-        Parse.enableLocalDatastore(this);
+        //Parse.enableLocalDatastore(this);
 
-        Parse.initialize(this, "TAtlc8CTlKZamlNni9egRbIJrWra8r50etoUiQbf", "oKmiR42goQnGM0FW6cQX1E6BCmv8glqacfV5SSNI");
+        //Parse.initialize(this, "TAtlc8CTlKZamlNni9egRbIJrWra8r50etoUiQbf", "oKmiR42goQnGM0FW6cQX1E6BCmv8glqacfV5SSNI");
 
 
     }

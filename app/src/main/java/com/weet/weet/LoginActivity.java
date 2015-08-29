@@ -31,7 +31,7 @@ public class LoginActivity extends BaseActivity {
         setSupportActionBar(toolbar);
 
         DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
-        digitsButton.setAuthTheme(R.style.AppTheme);
+        digitsButton.setAuthTheme(android.R.style.Theme_Material_NoActionBar);
         digitsButton.setCallback(new AuthCallback() {
             @Override
             public void success(DigitsSession session, String phoneNumber) {
