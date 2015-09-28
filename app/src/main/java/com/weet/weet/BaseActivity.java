@@ -6,6 +6,7 @@ import android.view.Menu;
 import android.view.MenuItem;
 
 import com.digits.sdk.android.Digits;
+import com.parse.Parse;
 import com.twitter.sdk.android.core.TwitterAuthConfig;
 import com.twitter.sdk.android.core.TwitterCore;
 
@@ -18,6 +19,9 @@ public class BaseActivity extends ActionBarActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        Parse.enableLocalDatastore(this);
+
+        Parse.initialize(this, "TAtlc8CTlKZamlNni9egRbIJrWra8r50etoUiQbf", "oKmiR42goQnGM0FW6cQX1E6BCmv8glqacfV5SSNI");
         if (!Fabric.isInitialized()) {
             TwitterAuthConfig authConfig = new TwitterAuthConfig(TWITTER_KEY, TWITTER_SECRET);
             Fabric.with(this, new TwitterCore(authConfig), new Digits());
