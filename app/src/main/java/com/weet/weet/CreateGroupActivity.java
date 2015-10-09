@@ -1,13 +1,21 @@
 package com.weet.weet;
 
-import android.support.v7.app.AppCompatActivity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
+import android.widget.Button;
+import android.widget.EditText;
 
-public class CreateGroupActivity extends BaseActivity {
+import com.parse.ParseObject;
+
+public class CreateGroupActivity extends ActionBarActivity {
     Toolbar toolbar;
+    String groupName;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -18,6 +26,38 @@ public class CreateGroupActivity extends BaseActivity {
 // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+        setTitle(R.string.app_name);
+        /*
+        Get groupname and store
+        */
+        final EditText groupNameT = (EditText) findViewById(R.id.groupName);
+       /* groupNameT.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View v, int keyCode, KeyEvent event) {
+                if ((event.getAction() == KeyEvent.ACTION_DOWN) &&
+                        (keyCode == KeyEvent.KEYCODE_ENTER)) {
+                    groupName = groupNameT.getText().toString();
+                    return true;
+                }
+                return false;
+            }
+        }); */
+
+        Button okButton = (Button) findViewById(R.id.button);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                groupName = groupNameT.getText().toString();
+                ParseObject group = new ParseObject("Group");
+                group.put("groupName", groupName);
+                group.saveInBackground();
+                Intent intent = new Intent(CreateGroupActivity.this, ChooseContactActivity.class);
+                startActivity(intent);
+            }
+        });
+
+
+        //Launch ChooseContactsActivity to select members for group
+
     }
 
     @Override

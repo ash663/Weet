@@ -32,7 +32,7 @@ import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardViewNative;
 
-public class Home extends BaseActivity  {
+public class Home extends ActionBarActivity  {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
 
@@ -41,15 +41,15 @@ public class Home extends BaseActivity  {
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
-    CharSequence Titles[]={"Restaurant","Outside"};
-    int Numboftabs = 2;
+   // CharSequence Titles[]={"Restaurant","Outside"};
+    //int Numboftabs = 2;
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        setTitle(R.string.app_name);
         //Setting statusBar color to ColorPrimaryDark
         getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 
@@ -143,7 +143,7 @@ public class Home extends BaseActivity  {
     }
 }
 
-class Group {
+/*class Group {
     String name;
     Date created;
     int photoId;
@@ -166,4 +166,4 @@ class Group {
         //groups.add(new Group("Lavery Maiss", "25 years old", R.drawable.lavery));
        // groups.add(new Group("Lillie Watts", "35 years old", R.drawable.lillie));
     }
-}
+}*/

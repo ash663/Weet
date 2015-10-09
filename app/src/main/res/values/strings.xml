@@ -13,5 +13,6 @@
     <string name="groupImg">Group Image</string>
     <string name="homeRec">Home Rec</string>
     <string name="title_activity_create_group">CreateGroupActivity</string>
-    <string name="groupName">Group Name</string>
+    <string name="grpName">Enter Group Name</string>
+    <string name="title_activity_choose_contact">ChooseContactActivity</string>
 </resources>
