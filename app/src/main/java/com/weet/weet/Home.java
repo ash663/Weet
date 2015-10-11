@@ -4,7 +4,9 @@ import android.annotation.TargetApi;
 import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.os.Build;
+import android.provider.ContactsContract;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
 import android.os.Bundle;
@@ -19,15 +21,14 @@ import android.view.View;
 
 import com.parse.Parse;
 import com.digits.sdk.android.Digits;
+import com.parse.ParseException;
 import com.parse.ParseUser;
-import com.twitter.sdk.android.core.TwitterAuthConfig;
-import com.twitter.sdk.android.core.TwitterCore;
+
 
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-import io.fabric.sdk.android.Fabric;
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardViewNative;
@@ -56,10 +57,27 @@ public class Home extends ActionBarActivity  {
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+        //ArrayList<String> allNumbers = getIntent().getStringArrayListExtra("allNum");
+        //ArrayList<String> allNumbers = new ArrayList<String>();
+        String phnNumber = getIntent().getStringExtra("phNo");
+        ArrayList<String> contacts;// = new ArrayList<>();
+        contacts = getIntent().getStringArrayListExtra("contacts");
 
+        ParseUser logUser = new ParseUser();
+        //System.out.println(allNumbers);
+        try {
+            logUser.logIn(phnNumber, phnNumber);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        //TODO: Add Refresh contacts button to do following:
+        //ParseUser currentUser = new ParseUser();
+        logUser = logUser.getCurrentUser();
+        //logUser.put("friends", allNumbers);
+        logUser.put("friends", contacts);
+        logUser.saveInBackground();
 
-        ParseUser currentUser = ParseUser.getCurrentUser();
-        if (currentUser != null) {
+        if (logUser != null) {
             // do stuff with the user. Show groups and stuff
             Card card = new Card(getApplicationContext());
 

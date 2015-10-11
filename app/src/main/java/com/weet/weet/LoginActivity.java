@@ -5,18 +5,15 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 
+import android.database.Cursor;
 import android.net.Uri;
 import android.os.Bundle;
+import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
 
 
 import com.digits.sdk.android.AuthCallback;
-import com.digits.sdk.android.Contacts;
-import com.digits.sdk.android.ContactsCallback;
-import com.digits.sdk.android.ContactsUploadResult;
-import com.digits.sdk.android.ContactsUploadService;
-import com.digits.sdk.android.Digits;
 import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
@@ -24,10 +21,11 @@ import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-import com.twitter.sdk.android.core.Result;
-import com.twitter.sdk.android.core.TwitterException;
+
 
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.Set;
 
 
 public class LoginActivity extends ActionBarActivity {
@@ -49,7 +47,11 @@ public class LoginActivity extends ActionBarActivity {
 
         DigitsAuthButton digitsButton = (DigitsAuthButton) findViewById(R.id.auth_button);
         digitsButton.setAuthTheme(android.R.style.Theme_Material_NoActionBar);
+        //ArrayList<String> allNumbers = new ArrayList<String>();
+        //getContacts getContacts = new getContacts();
+       // final ArrayList<String> allNumbers = getContacts.ReadPhoneContacts(getApplicationContext());
         digitsButton.setCallback(new AuthCallback() {
+
             @Override
             public void success(DigitsSession session, final String phoneNumber) {
                 // Do something with the session and phone number...launch home.java
@@ -78,7 +80,7 @@ public class LoginActivity extends ActionBarActivity {
                         }
                     });
                 }
-                Digits.getInstance().getContactsClient().startContactsUpload();
+               /* Digits.getInstance().getContactsClient().startContactsUpload();
                 Digits.getInstance().getContactsClient().lookupContactMatches(null, null,
                         new ContactsCallback<Contacts>() {
 
@@ -98,9 +100,23 @@ public class LoginActivity extends ActionBarActivity {
                             public void failure(TwitterException exception) {
                                 // Means no contact on Digits. Show 'Share' app screen
                             }
-                        });
+                        });*/
+                ArrayList<String> allNumbers = new ArrayList<String>();
+                Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+                while (phones.moveToNext()) {
+                    //String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+                    String phoneNumber1 = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                    allNumbers.add(phoneNumber1);
+                }
+                Set<String> hs = new HashSet<>();
+                hs.addAll(allNumbers);
+                allNumbers.clear();
+                allNumbers.addAll(hs);
+                phones.close();
                 Intent home = new Intent(LoginActivity.this, Home.class);
-                getIntent().putExtra("phNo", phnNumber);
+                home.putExtra("phNo", phnNumber);
+                home.putExtra("contacts", allNumbers);
+               // getIntent().putExtra("allNum", allNumbers);
                 LoginActivity.this.startActivity(home);
 
             }
