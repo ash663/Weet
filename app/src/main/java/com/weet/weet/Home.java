@@ -1,33 +1,21 @@
 package com.weet.weet;
 
 import android.annotation.TargetApi;
-import android.app.Activity;
-import android.content.Context;
 import android.content.Intent;
-import android.database.Cursor;
 import android.os.Build;
-import android.provider.ContactsContract;
+import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v4.view.ViewPager;
-import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
-import android.support.v7.widget.LinearLayoutManager;
-import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
-
-import com.parse.Parse;
-import com.digits.sdk.android.Digits;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
-
 import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
 
 import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardHeader;
@@ -98,7 +86,7 @@ public class Home extends ActionBarActivity  {
         fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
             public void onClick(View view) {
                 //Launch new activity to create Group
-                Intent intent = new Intent(Home.this, CreateGroupActivity.class);
+                Intent intent = new Intent(Home.this, ChooseContactActivity.class);
                 startActivity(intent);
             }
         });

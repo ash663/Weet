@@ -58,12 +58,17 @@
         <receiver
             android:name=".ContactsReceiver"
             android:enabled="true"
-            android:exported="false">
-        <intent-filter>
-            <action android:name="com.digits.sdk.android.UPLOAD_COMPLETE"/>
-            <action android:name="com.digits.sdk.android.UPLOAD_FAILED"/>
-        </intent-filter>
+            android:exported="false" >
+            <intent-filter>
+                <action android:name="com.digits.sdk.android.UPLOAD_COMPLETE" />
+                <action android:name="com.digits.sdk.android.UPLOAD_FAILED" />
+            </intent-filter>
         </receiver>
+
+        <activity
+            android:name=".NewGroupActivity"
+            android:label="@string/title_activity_new_group" >
+        </activity>
     </application>
 
 </manifest>

@@ -1,27 +1,20 @@
 package com.weet.weet;
 
 
-import android.content.BroadcastReceiver;
-import android.content.Context;
 import android.content.Intent;
-
 import android.database.Cursor;
-import android.net.Uri;
 import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-
 
 import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.DigitsAuthButton;
 import com.digits.sdk.android.DigitsException;
 import com.digits.sdk.android.DigitsSession;
 import com.parse.ParseException;
-import com.parse.ParseObject;
 import com.parse.ParseUser;
 import com.parse.SignUpCallback;
-
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -103,10 +96,14 @@ public class LoginActivity extends ActionBarActivity {
                         });*/
                 ArrayList<String> allNumbers = new ArrayList<String>();
                 Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
+                String phoneNumber1;
                 while (phones.moveToNext()) {
                     //String name=phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
-                    String phoneNumber1 = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
-                    allNumbers.add(phoneNumber1);
+                    phoneNumber1 = phones.getString(phones.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)).replaceAll("\\D", "");
+                    if(phoneNumber1.length() >= 10 && phoneNumber1.charAt(phoneNumber1.length() - 10) >= '7') {
+                        phoneNumber1 = "+91" + phoneNumber1.substring(phoneNumber1.length() - 10);
+                        allNumbers.add(phoneNumber1);
+                    }
                 }
                 Set<String> hs = new HashSet<>();
                 hs.addAll(allNumbers);
