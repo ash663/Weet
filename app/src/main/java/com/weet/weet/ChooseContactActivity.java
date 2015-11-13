@@ -33,11 +33,13 @@ public class ChooseContactActivity extends AppCompatActivity {
     ArrayList<String> recipientID = new ArrayList<String>();
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_choose_contact);
         LinearMain = (LinearLayout) findViewById(R.id.linear_main);
+
 
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();//query to find all the usernames in _Users
@@ -87,7 +89,10 @@ public class ChooseContactActivity extends AppCompatActivity {
         fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
             public void onClick(View view) {
                 //Launch new activity to create Group
-                Intent intent = new Intent(ChooseContactActivity.this, MessagingActivity.class);
+                Intent intent = new Intent(ChooseContactActivity.this, CreateGroupActivity.class);
+                ParseObject group = new ParseObject("Group");
+                group.put("members",recipientID.toString());
+                group.saveInBackground();
                 intent.putExtra("recipient_id",recipientID.toString());
                 startActivity(intent);
             }
@@ -96,6 +101,7 @@ public class ChooseContactActivity extends AppCompatActivity {
     }
 
     public View.OnClickListener doSomething(final Button button) {
+
         return new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -111,8 +117,12 @@ public class ChooseContactActivity extends AppCompatActivity {
                     }
                 });
                 Toast.makeText(getApplicationContext(), recipientID.toString(), Toast.LENGTH_SHORT).show();
+
+
             }
 
         };
+
+
     }
 }

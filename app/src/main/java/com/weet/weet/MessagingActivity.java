@@ -64,6 +64,13 @@ findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
         sendMessage();
     }
 });
+
+    findViewById(R.id.showPlace).setOnClickListener(new View.OnClickListener(){
+        @Override
+        public void onClick(View view) {
+            Intent i= new Intent(MessagingActivity.this,showPlaceActivity.class);
+        }
+    });
 }
 
 //get previous messages from parse & display

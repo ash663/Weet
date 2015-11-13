@@ -4,7 +4,6 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
-import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -16,11 +15,15 @@ import com.parse.ParseObject;
 public class CreateGroupActivity extends ActionBarActivity {
     Toolbar toolbar;
     String groupName;
+    String recipientId;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_create_group);
+
+        Intent intent = getIntent();
+        recipientId = intent.getStringExtra("recipient_id");
 
         getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 // Creating The Toolbar and setting it as the Toolbar for the activity
@@ -49,9 +52,12 @@ public class CreateGroupActivity extends ActionBarActivity {
                 groupName = groupNameT.getText().toString();
                 ParseObject group = new ParseObject("Group");
                 group.put("groupName", groupName);
+                group.put("members",recipientId);
                 group.saveInBackground();
-                //Intent intent = new Intent(CreateGroupActivity.this, ChooseContactActivity.class);
-                //startActivity(intent);
+                Intent intent = new Intent(CreateGroupActivity.this, MessagingActivity.class);
+                intent.putExtra("recipient_id", recipientId);
+                startActivity(intent);
+
             }
         });
 
