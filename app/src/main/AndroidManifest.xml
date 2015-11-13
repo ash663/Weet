@@ -65,11 +65,10 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".MessageService"></service>
-        <activity android:name=".MessagingActivity"
-            android:screenOrientation="portrait">
+        <activity
+            android:name=".NewGroupActivity"
+            android:label="@string/title_activity_new_group" >
         </activity>
-
     </application>
 
 </manifest>
