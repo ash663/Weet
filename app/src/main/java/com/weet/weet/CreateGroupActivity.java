@@ -50,8 +50,8 @@ public class CreateGroupActivity extends ActionBarActivity {
                 ParseObject group = new ParseObject("Group");
                 group.put("groupName", groupName);
                 group.saveInBackground();
-                Intent intent = new Intent(CreateGroupActivity.this, ChooseContactActivity.class);
-                startActivity(intent);
+                //Intent intent = new Intent(CreateGroupActivity.this, ChooseContactActivity.class);
+                //startActivity(intent);
             }
         });
 

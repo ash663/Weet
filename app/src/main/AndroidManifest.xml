@@ -10,6 +10,8 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
+
 
     <receiver
         android:name=".MyResultReceiver"
@@ -65,9 +67,14 @@
             </intent-filter>
         </receiver>
 
-        <activity
+        <!--<activity
             android:name=".NewGroupActivity"
             android:label="@string/title_activity_new_group" >
+        </activity> -->
+        <activity
+            android:name=".LocationActivity"
+            android:label="@string/title_activity_location"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

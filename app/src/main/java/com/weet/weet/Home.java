@@ -2,6 +2,7 @@ package com.weet.weet;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,9 @@ import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.parse.ParseException;
 import com.parse.ParseUser;
 
@@ -21,11 +25,13 @@ import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardViewNative;
 
-public class Home extends ActionBarActivity  {
+public class Home extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
+    protected Location mLastLocation;
+    ParseUser logUser = new ParseUser();
 
-
+    GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
@@ -45,13 +51,20 @@ public class Home extends ActionBarActivity  {
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+        //buildGoogleApiClient();
         //ArrayList<String> allNumbers = getIntent().getStringArrayListExtra("allNum");
         //ArrayList<String> allNumbers = new ArrayList<String>();
         String phnNumber = getIntent().getStringExtra("phNo");
         ArrayList<String> contacts;// = new ArrayList<>();
         contacts = getIntent().getStringArrayListExtra("contacts");
 
-        ParseUser logUser = new ParseUser();
         //System.out.println(allNumbers);
         try {
             logUser.logIn(phnNumber, phnNumber);
@@ -126,6 +139,18 @@ public class Home extends ActionBarActivity  {
 
     }
 
+    public void onConnected(Bundle connectionHint) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+            logUser.put("Latitude", mLastLocation.getLatitude());
+            logUser.put("Longitude", mLastLocation.getLongitude());
+            logUser.saveInBackground();
+        }
+    }
+
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
@@ -147,6 +172,25 @@ public class Home extends ActionBarActivity  {
 
         return super.onOptionsItemSelected(item);
     }
+
+    protected synchronized void buildGoogleApiClient() {
+
+    }
+
+    public void onConnectionSuspended(int cause) {
+        // The connection has been interrupted.
+        // Disable any UI components that depend on Google APIs
+        // until onConnected() is called.
+    }
+
+    public void onConnectionFailed(ConnectionResult result) {
+        // This callback is important for handling errors that
+        // may occur while attempting to connect with Google.
+        //
+        // More about this in the 'Handle Connection Failures' section.
+
+    }
+
 }
 
 /*class Group {
