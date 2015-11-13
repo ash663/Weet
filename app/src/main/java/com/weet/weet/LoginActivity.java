@@ -7,6 +7,7 @@ import android.os.Bundle;
 import android.provider.ContactsContract;
 import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.Toolbar;
+import android.widget.Toast;
 
 import com.digits.sdk.android.AuthCallback;
 import com.digits.sdk.android.DigitsAuthButton;
@@ -73,27 +74,7 @@ public class LoginActivity extends ActionBarActivity {
                         }
                     });
                 }
-               /* Digits.getInstance().getContactsClient().startContactsUpload();
-                Digits.getInstance().getContactsClient().lookupContactMatches(null, null,
-                        new ContactsCallback<Contacts>() {
 
-                            @Override
-                            public void success(Result<Contacts> result) {
-                                if (result.data.users != null) {
-                                    // Send data to Parse and add all numbers to phoneNumber's friends list
-                                    //Todo: Look up Contacts class and send data!
-                                    ArrayList Users = result.data.users;
-                                    user.put("friends", Users);
-
-
-                                }
-                            }
-
-                            @Override
-                            public void failure(TwitterException exception) {
-                                // Means no contact on Digits. Show 'Share' app screen
-                            }
-                        });*/
                 ArrayList<String> allNumbers = new ArrayList<String>();
                 Cursor phones = getContentResolver().query(ContactsContract.CommonDataKinds.Phone.CONTENT_URI, null,null,null, null);
                 String phoneNumber1;
@@ -105,6 +86,9 @@ public class LoginActivity extends ActionBarActivity {
                         allNumbers.add(phoneNumber1);
                     }
                 }
+
+                Toast.makeText(getApplicationContext(), allNumbers.toString(), Toast.LENGTH_SHORT).show();
+
                 Set<String> hs = new HashSet<>();
                 hs.addAll(allNumbers);
                 allNumbers.clear();

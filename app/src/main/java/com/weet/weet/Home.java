@@ -11,6 +11,7 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Toast;
 
 import com.parse.ParseException;
 import com.parse.ParseUser;
@@ -50,52 +51,56 @@ public class Home extends ActionBarActivity  {
         String phnNumber = getIntent().getStringExtra("phNo");
         ArrayList<String> contacts;// = new ArrayList<>();
         contacts = getIntent().getStringArrayListExtra("contacts");
-
-        ParseUser logUser = new ParseUser();
-        //System.out.println(allNumbers);
-        try {
-            logUser.logIn(phnNumber, phnNumber);
-        } catch (ParseException e) {
-            e.printStackTrace();
+        if(contacts == null )
+        {
+            Toast.makeText(getApplicationContext(), "Heywho", Toast.LENGTH_SHORT).show();
         }
-        //TODO: Add Refresh contacts button to do following:
-        //ParseUser currentUser = new ParseUser();
-        logUser = logUser.getCurrentUser();
-        //logUser.put("friends", allNumbers);
-        logUser.put("friends", contacts);
-        logUser.saveInBackground();
-
-        if (logUser != null) {
-            // do stuff with the user. Show groups and stuff
-            Card card = new Card(getApplicationContext());
-
-            CardHeader header = new CardHeader(getApplicationContext());
-
-            card.addCardHeader(header);
-
-            CardViewNative cardView = (CardViewNative) findViewById(R.id.carddemo);
-
-            cardView.setCard(card);
-        } else {
-            // show the signup or login screen. Launch LoginActivity
-        }
-
-
-        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.homeFab);
-
-        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
-            public void onClick(View view) {
-                //Launch new activity to create Group
-                Intent intent = new Intent(Home.this, ChooseContactActivity.class);
-                startActivity(intent);
+        else {
+            ParseUser logUser = new ParseUser();
+            //System.out.println(allNumbers);
+            try {
+                logUser.logIn(phnNumber, phnNumber);
+            } catch (ParseException e) {
+                e.printStackTrace();
             }
-        });
+            //TODO: Add Refresh contacts button to do following:
+            //ParseUser currentUser = new ParseUser();
+            logUser = logUser.getCurrentUser();
+            //logUser.put("friends", allNumbers);
+            logUser.put("friends", contacts);
+            logUser.saveInBackground();
 
-        // RecyclerView rv = (RecyclerView) findViewById(R.id.homeRec);
+            if (logUser != null) {
+                // do stuff with the user. Show groups and stuff
+                Card card = new Card(getApplicationContext());
 
-        //Context context = this;
-        //LinearLayoutManager llm = new LinearLayoutManager(context);
-        //rv.setLayoutManager(llm);
+                CardHeader header = new CardHeader(getApplicationContext());
+
+                card.addCardHeader(header);
+
+                CardViewNative cardView = (CardViewNative) findViewById(R.id.carddemo);
+
+                cardView.setCard(card);
+            } else {
+                // show the signup or login screen. Launch LoginActivity
+            }
+
+
+            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.homeFab);
+
+            fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
+                public void onClick(View view) {
+                    //Launch new activity to create Group
+                    Intent intent = new Intent(Home.this, ChooseContactActivity.class);
+                    startActivity(intent);
+                }
+            });
+
+            // RecyclerView rv = (RecyclerView) findViewById(R.id.homeRec);
+
+            //Context context = this;
+            //LinearLayoutManager llm = new LinearLayoutManager(context);
+            //rv.setLayoutManager(llm);
 
         /*// Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
@@ -120,9 +125,7 @@ public class Home extends ActionBarActivity  {
         tabs.setViewPager(pager);*/
 
 
-
-
-
+        }
 
     }
 
