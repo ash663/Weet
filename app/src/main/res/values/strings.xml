@@ -22,4 +22,5 @@
     <string name="hello_world">Hello world!</string>
     <string name="message_elipses">Message...</string>
     <string name="logout">Logout</string>
+    <string name="title_activity_show_place">showPlaceActivity</string>
 </resources>

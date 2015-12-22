@@ -10,6 +10,7 @@
     <uses-permission android:name="android.permission.READ_PHONE_STATE" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"></uses-permission>
 
     <receiver
         android:name=".MyResultReceiver"
@@ -65,9 +66,16 @@
             </intent-filter>
         </receiver>
 
-        <service android:name=".MessageService"></service>
-        <activity android:name=".MessagingActivity"
-            android:screenOrientation="portrait">
+        <service android:name=".MessageService" />
+
+        <activity
+            android:name=".MessagingActivity"
+            android:screenOrientation="portrait" >
+        </activity>
+        <activity
+            android:name=".showPlaceActivity"
+            android:label="@string/title_activity_show_place"
+            android:theme="@style/AppTheme" >
         </activity>
     </application>
 

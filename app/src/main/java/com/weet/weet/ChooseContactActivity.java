@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.v7.app.AppCompatActivity;
+import android.support.v7.widget.Toolbar;
 import android.view.View;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
@@ -30,8 +31,8 @@ public class ChooseContactActivity extends AppCompatActivity {
     ArrayAdapter<String> friendsArrayAdapter;
     String phoneNumber;
     LinearLayout LinearMain;
-    ArrayList<String> recipientID = new ArrayList<String>();
-
+    ArrayList<String> recipientID = new ArrayList<>();
+    Toolbar toolbar;
 
 
     @Override
@@ -40,13 +41,19 @@ public class ChooseContactActivity extends AppCompatActivity {
         setContentView(R.layout.activity_choose_contact);
         LinearMain = (LinearLayout) findViewById(R.id.linear_main);
 
+        setTitle(R.string.app_name);
+        //Setting statusBar color to ColorPrimaryDark
+        getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 
+        // Creating The Toolbar and setting it as the Toolbar for the activity
+        toolbar = (Toolbar) findViewById(R.id.tool_bar);
+        setSupportActionBar(toolbar);
 
         ParseQuery<ParseUser> query = ParseUser.getQuery();//query to find all the usernames in _Users
         query.findInBackground(new FindCallback<ParseUser>() {
             public void done(List<ParseUser> objects, ParseException e) {//objects will contain all the users
                 if (e == null) {
-                    allUsersInDb = new ArrayList<String>();
+                    allUsersInDb = new ArrayList<>();
                     for (int i = 0; i < objects.size(); i++) {
                         if(ParseUser.getCurrentUser() != objects.get(i)) {
                             allUsersInDb.add(objects.get(i).getUsername().toString());//Getting the username of the individual objects and storing it in the ArrayList
@@ -54,7 +61,7 @@ public class ChooseContactActivity extends AppCompatActivity {
                     }
 
                     ParseUser user = ParseUser.getCurrentUser();
-                    recipientID = new ArrayList<String>();
+                    recipientID = new ArrayList<>();
 
                     phoneNumber = user.get("username").toString();
                     friendsArrayList = (ArrayList<String>)user.get("friends");
@@ -67,7 +74,7 @@ public class ChooseContactActivity extends AppCompatActivity {
                         }
                     }
 
-                    Toast.makeText(getApplicationContext(), refinedFriendsList.toString(), Toast.LENGTH_SHORT).show();
+                   // Toast.makeText(getApplicationContext(), refinedFriendsList.toString(), Toast.LENGTH_SHORT).show();
 
                     for(int i=0;i<refinedFriendsList.size();i++)
                     {
@@ -91,9 +98,13 @@ public class ChooseContactActivity extends AppCompatActivity {
                 //Launch new activity to create Group
                 Intent intent = new Intent(ChooseContactActivity.this, CreateGroupActivity.class);
                 ParseObject group = new ParseObject("Group");
-                group.put("members",recipientID.toString());
-                group.saveInBackground();
-                intent.putExtra("recipient_id",recipientID.toString());
+                //group.put("members",recipientID);
+                ArrayList<String> mems = new ArrayList<String>(recipientID);
+
+                //group.saveInBackground();
+                //intent.putExtra("recipient_id",recipientID.toString());
+                intent.putStringArrayListExtra("recipient_id", recipientID);
+                //intent.putStringArrayListExtra("mems", mems);
                 startActivity(intent);
             }
         });
@@ -116,7 +127,7 @@ public class ChooseContactActivity extends AppCompatActivity {
 
                     }
                 });
-                Toast.makeText(getApplicationContext(), recipientID.toString(), Toast.LENGTH_SHORT).show();
+                //Toast.makeText(getApplicationContext(), recipientID.toString(), Toast.LENGTH_SHORT).show();
 
 
             }

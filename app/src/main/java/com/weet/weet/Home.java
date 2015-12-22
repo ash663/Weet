@@ -2,6 +2,7 @@ package com.weet.weet;
 
 import android.annotation.TargetApi;
 import android.content.Intent;
+import android.location.Location;
 import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -11,9 +12,13 @@ import android.support.v7.widget.Toolbar;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.widget.Toast;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.location.LocationServices;
 import com.parse.ParseException;
+import com.parse.ParseGeoPoint;
+import com.parse.ParseObject;
 import com.parse.ParseUser;
 
 import java.util.ArrayList;
@@ -22,17 +27,19 @@ import it.gmariotti.cardslib.library.internal.Card;
 import it.gmariotti.cardslib.library.internal.CardHeader;
 import it.gmariotti.cardslib.library.view.CardViewNative;
 
-public class Home extends ActionBarActivity  {
+public class Home extends ActionBarActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener {
 
     // Note: Your consumer key and secret should be obfuscated in your source code before shipping.
-
-
+    protected Location mLastLocation;
+    ParseUser logUser;
+    GoogleApiClient mGoogleApiClient;
     Toolbar toolbar;
     ViewPager pager;
     ViewPagerAdapter adapter;
     SlidingTabLayout tabs;
    // CharSequence Titles[]={"Restaurant","Outside"};
     //int Numboftabs = 2;
+    ParseObject LocationClass = new ParseObject("Location");
 
     @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
@@ -46,61 +53,60 @@ public class Home extends ActionBarActivity  {
         // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
         setSupportActionBar(toolbar);
+
+
+        buildGoogleApiClient();
         //ArrayList<String> allNumbers = getIntent().getStringArrayListExtra("allNum");
         //ArrayList<String> allNumbers = new ArrayList<String>();
         String phnNumber = getIntent().getStringExtra("phNo");
         ArrayList<String> contacts;// = new ArrayList<>();
         contacts = getIntent().getStringArrayListExtra("contacts");
-        if(contacts == null )
-        {
-            Toast.makeText(getApplicationContext(), "Heywho", Toast.LENGTH_SHORT).show();
+
+        logUser = new ParseUser();
+        //System.out.println(allNumbers);
+        try {
+            logUser.logIn(phnNumber, phnNumber);
+        } catch (ParseException e) {
+            e.printStackTrace();
         }
-        else {
-            ParseUser logUser = new ParseUser();
-            //System.out.println(allNumbers);
-            try {
-                logUser.logIn(phnNumber, phnNumber);
-            } catch (ParseException e) {
-                e.printStackTrace();
+        //TODO: Add Refresh contacts button to do following:
+        //ParseUser currentUser = new ParseUser();
+        logUser = logUser.getCurrentUser();
+        //logUser.put("friends", allNumbers);
+        logUser.put("friends", contacts);
+        logUser.saveInBackground();
+        LocationClass.put("Username", logUser.getObjectId());
+        if (logUser != null) {
+            // do stuff with the user. Show groups and stuff
+            Card card = new Card(getApplicationContext());
+
+            CardHeader header = new CardHeader(getApplicationContext());
+
+            card.addCardHeader(header);
+
+            CardViewNative cardView = (CardViewNative) findViewById(R.id.carddemo);
+
+            cardView.setCard(card);
+        } else {
+            // show the signup or login screen. Launch LoginActivity
+        }
+
+
+        FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.homeFab);
+
+        fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
+            public void onClick(View view) {
+                //Launch new activity to create Group
+                Intent intent = new Intent(Home.this, ChooseContactActivity.class);
+                startActivity(intent);
             }
-            //TODO: Add Refresh contacts button to do following:
-            //ParseUser currentUser = new ParseUser();
-            logUser = logUser.getCurrentUser();
-            //logUser.put("friends", allNumbers);
-            logUser.put("friends", contacts);
-            logUser.saveInBackground();
+        });
 
-            if (logUser != null) {
-                // do stuff with the user. Show groups and stuff
-                Card card = new Card(getApplicationContext());
+        // RecyclerView rv = (RecyclerView) findViewById(R.id.homeRec);
 
-                CardHeader header = new CardHeader(getApplicationContext());
-
-                card.addCardHeader(header);
-
-                CardViewNative cardView = (CardViewNative) findViewById(R.id.carddemo);
-
-                cardView.setCard(card);
-            } else {
-                // show the signup or login screen. Launch LoginActivity
-            }
-
-
-            FloatingActionButton fab = (FloatingActionButton) findViewById(R.id.homeFab);
-
-            fab.setOnClickListener(new FloatingActionButton.OnClickListener() {
-                public void onClick(View view) {
-                    //Launch new activity to create Group
-                    Intent intent = new Intent(Home.this, ChooseContactActivity.class);
-                    startActivity(intent);
-                }
-            });
-
-            // RecyclerView rv = (RecyclerView) findViewById(R.id.homeRec);
-
-            //Context context = this;
-            //LinearLayoutManager llm = new LinearLayoutManager(context);
-            //rv.setLayoutManager(llm);
+        //Context context = this;
+        //LinearLayoutManager llm = new LinearLayoutManager(context);
+        //rv.setLayoutManager(llm);
 
         /*// Creating The ViewPagerAdapter and Passing Fragment Manager, Titles fot the Tabs and Number Of Tabs.
         adapter =  new ViewPagerAdapter(getSupportFragmentManager(),Titles,Numboftabs);
@@ -125,9 +131,12 @@ public class Home extends ActionBarActivity  {
         tabs.setViewPager(pager);*/
 
 
-        }
+
+
+
 
     }
+
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
@@ -150,6 +159,61 @@ public class Home extends ActionBarActivity  {
 
         return super.onOptionsItemSelected(item);
     }
+
+    protected synchronized void buildGoogleApiClient() {
+        mGoogleApiClient = new GoogleApiClient.Builder(this)
+                .addConnectionCallbacks(this)
+                .addOnConnectionFailedListener(this)
+                .addApi(LocationServices.API)
+                .build();
+
+    }
+
+    protected void onStart() {
+        super.onStart();
+        mGoogleApiClient.connect();
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if (mGoogleApiClient.isConnected()) {
+            mGoogleApiClient.disconnect();
+        }
+    }
+
+    public void onConnected(Bundle connectionHint) {
+        mLastLocation = LocationServices.FusedLocationApi.getLastLocation(
+                mGoogleApiClient);
+        if (mLastLocation != null) {
+            //mLatitudeText.setText(String.valueOf(mLastLocation.getLatitude()));
+            //mLongitudeText.setText(String.valueOf(mLastLocation.getLongitude()));
+            //ParseGeoPoint point = new ParseGeoPoint(mLastLocation.getLatitude(), mLastLocation.getLongitude());
+            //logUser.put("location", point);
+            //logUser.put("latitude", mLastLocation.getLatitude());
+            //logUser.put("longitude", mLastLocation.getLatitude());
+            //logUser.saveInBackground();
+            LocationClass.put("latitude", mLastLocation.getLatitude());
+            LocationClass.put("longitude", mLastLocation.getLongitude());
+            LocationClass.saveInBackground();
+        }
+    }
+
+
+    public void onConnectionSuspended(int cause) {
+        // The connection has been interrupted.
+        // Disable any UI components that depend on Google APIs
+        // until onConnected() is called.
+    }
+
+    public void onConnectionFailed(ConnectionResult result) {
+        // This callback is important for handling errors that
+        // may occur while attempting to connect with Google.
+        //
+        // More about this in the 'Handle Connection Failures' section.
+
+    }
+
 }
 
 /*class Group {

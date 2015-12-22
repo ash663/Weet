@@ -9,13 +9,18 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.Toast;
 
 import com.parse.ParseObject;
+
+import java.util.ArrayList;
 
 public class CreateGroupActivity extends ActionBarActivity {
     Toolbar toolbar;
     String groupName;
-    String recipientId;
+    ArrayList<String> recipientId = new ArrayList<>();
+    String groupID;
+   // ArrayList<String> mems = new ArrayList<>();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,8 +28,10 @@ public class CreateGroupActivity extends ActionBarActivity {
         setContentView(R.layout.activity_create_group);
 
         Intent intent = getIntent();
-        recipientId = intent.getStringExtra("recipient_id");
+        recipientId = intent.getStringArrayListExtra("recipient_id");
+        //mems = intent.getStringArrayListExtra("mems");
 
+        //Toast.makeText(getApplicationContext(), mems.toString(), Toast.LENGTH_LONG).show();
         getWindow().setStatusBarColor(getResources().getColor(R.color.ColorPrimaryDark));
 // Creating The Toolbar and setting it as the Toolbar for the activity
         toolbar = (Toolbar) findViewById(R.id.tool_bar);
@@ -52,10 +59,14 @@ public class CreateGroupActivity extends ActionBarActivity {
                 groupName = groupNameT.getText().toString();
                 ParseObject group = new ParseObject("Group");
                 group.put("groupName", groupName);
-                group.put("members",recipientId);
+                //group.put("members2", mems);
+                groupID = group.getObjectId();
+
                 group.saveInBackground();
                 Intent intent = new Intent(CreateGroupActivity.this, MessagingActivity.class);
-                intent.putExtra("recipient_id", recipientId);
+                intent.putStringArrayListExtra("recipient_id", recipientId);
+                intent.putExtra("group_id", groupID);
+                //intent.putStringArrayListExtra("mems", mems);
                 startActivity(intent);
 
             }

@@ -1,5 +1,7 @@
 package com.weet.weet;
 
+import android.annotation.TargetApi;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
 import android.support.design.widget.Snackbar;
@@ -10,6 +12,7 @@ import android.view.View;
 public class LocationActivity extends AppCompatActivity {
     Toolbar toolbar;
 
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);

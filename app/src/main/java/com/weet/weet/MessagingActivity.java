@@ -24,159 +24,166 @@ import com.sinch.android.rtc.messaging.MessageDeliveryInfo;
 import com.sinch.android.rtc.messaging.MessageFailureInfo;
 import com.sinch.android.rtc.messaging.WritableMessage;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
 public class MessagingActivity extends Activity {
-
-private String recipientId;
-private EditText messageBodyField;
-private String messageBody;
-private MessageService.MessageServiceInterface messageService;
-private MessageAdapter messageAdapter;
-private ListView messagesList;
-private String currentUserId;
-private ServiceConnection serviceConnection = new MyServiceConnection();
-private MessageClientListener messageClientListener = new MyMessageClientListener();
-
-@Override
-protected void onCreate(Bundle savedInstanceState) {
-super.onCreate(savedInstanceState);
-setContentView(R.layout.messaging);
-
-bindService(new Intent(this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
-
-Intent intent = getIntent();
-recipientId = intent.getStringExtra("recipient_id");
-    Toast.makeText(this, recipientId, Toast.LENGTH_LONG).show();
-currentUserId = ParseUser.getCurrentUser().getObjectId();
-
-messagesList = (ListView) findViewById(R.id.listMessages);
-messageAdapter = new MessageAdapter(this);
-messagesList.setAdapter(messageAdapter);
-populateMessageHistory();
-
-messageBodyField = (EditText) findViewById(R.id.messageBodyField);
-
-findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
+    String groupID;
+    private ArrayList<String> recipientId = new ArrayList<>();
+    private EditText messageBodyField;
+    private String messageBody;
+    private MessageService.MessageServiceInterface messageService;
+    private MessageAdapter messageAdapter;
+    private ListView messagesList;
+    private String currentUserId;
+    private ServiceConnection serviceConnection = new MyServiceConnection();
+    private MessageClientListener messageClientListener = new MyMessageClientListener();
+    ArrayList<String> members = new ArrayList<>();
     @Override
-    public void onClick(View view) {
-        sendMessage();
-    }
-});
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.messaging);
 
-    findViewById(R.id.showPlace).setOnClickListener(new View.OnClickListener(){
-        @Override
-        public void onClick(View view) {
-            Intent i= new Intent(MessagingActivity.this,showPlaceActivity.class);
-        }
-    });
-}
+        bindService(new Intent(this, MessageService.class), serviceConnection, BIND_AUTO_CREATE);
 
-//get previous messages from parse & display
-private void populateMessageHistory() {
-String[] userIds = {currentUserId, recipientId};
-ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseMessage");
-query.whereContainedIn("senderId", Arrays.asList(userIds));
-query.whereContainedIn("recipientId", Arrays.asList(userIds));
-query.orderByAscending("createdAt");
-query.findInBackground(new FindCallback<ParseObject>() {
-    @Override
-    public void done(List<ParseObject> messageList, com.parse.ParseException e) {
-        if (e == null) {
-            for (int i = 0; i < messageList.size(); i++) {
-                WritableMessage message = new WritableMessage(messageList.get(i).get("recipientId").toString(), messageList.get(i).get("messageText").toString());
-                if (messageList.get(i).get("senderId").toString().equals(currentUserId)) {
-                    messageAdapter.addMessage(message, MessageAdapter.DIRECTION_OUTGOING);
-                } else {
-                    messageAdapter.addMessage(message, MessageAdapter.DIRECTION_INCOMING);
-                }
+        Intent intent = getIntent();
+        recipientId = intent.getStringArrayListExtra("recipient_id");
+        groupID = intent.getStringExtra("group_id");
+        //members = intent.getStringArrayListExtra("mems");
+        //Toast.makeText(this, recipientId, Toast.LENGTH_LONG).show();
+        currentUserId = ParseUser.getCurrentUser().getObjectId();
+
+        messagesList = (ListView) findViewById(R.id.listMessages);
+        messageAdapter = new MessageAdapter(this);
+        messagesList.setAdapter(messageAdapter);
+        populateMessageHistory();
+
+        messageBodyField = (EditText) findViewById(R.id.messageBodyField);
+
+        findViewById(R.id.sendButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                sendMessage();
             }
-        }
+        });
+
+        findViewById(R.id.showPlace).setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View view) {
+                Intent i= new Intent(MessagingActivity.this,showPlaceActivity.class);
+                i.putExtra("group_id", groupID);
+                //i.putStringArrayListExtra("mems", members);
+                i.putStringArrayListExtra("recipient_id", recipientId);
+                startActivity(i);
+            }
+        });
     }
-});
-}
 
-private void sendMessage() {
-messageBody = messageBodyField.getText().toString();
-    Toast.makeText(this,messageBody, Toast.LENGTH_LONG).show();
-if (messageBody.isEmpty()) {
-    Toast.makeText(this, "Please enter a message", Toast.LENGTH_LONG).show();
-    return;
-}
-
-messageService.sendMessage(recipientId, messageBody);
-messageBodyField.setText("");
-}
-
-@Override
-public void onDestroy() {
-messageService.removeMessageClientListener(messageClientListener);
-unbindService(serviceConnection);
-super.onDestroy();
-}
-
-private class MyServiceConnection implements ServiceConnection {
-@Override
-public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
-    messageService = (MessageService.MessageServiceInterface) iBinder;
-    messageService.addMessageClientListener(messageClientListener);
-}
-
-@Override
-public void onServiceDisconnected(ComponentName componentName) {
-    messageService = null;
-}
-}
-
-private class MyMessageClientListener implements MessageClientListener {
-@Override
-public void onMessageFailed(MessageClient client, Message message,
-                            MessageFailureInfo failureInfo) {
-    Toast.makeText(MessagingActivity.this, "Message failed to send.", Toast.LENGTH_LONG).show();
-}
-
-@Override
-public void onIncomingMessage(MessageClient client, final Message message) {
-    if (message.getSenderId().equals(recipientId)) {
-        final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
-
-        //only add message to parse database if it doesn't already exist there
+    //get previous messages from parse & display
+    private void populateMessageHistory() {
+        String[] userIds = {currentUserId, recipientId.toString()};
         ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseMessage");
-        query.whereEqualTo("sinchId", message.getMessageId());
+        query.whereContainedIn("senderId", Arrays.asList(userIds));
+        query.whereContainedIn("recipientId", Arrays.asList(userIds));
+        query.orderByAscending("createdAt");
         query.findInBackground(new FindCallback<ParseObject>() {
             @Override
             public void done(List<ParseObject> messageList, com.parse.ParseException e) {
                 if (e == null) {
-                    if (messageList.size() == 0) {
-                        ParseObject parseMessage = new ParseObject("ParseMessage");
-                        parseMessage.put("senderId", currentUserId);
-                        parseMessage.put("recipientId", writableMessage.getRecipientIds().get(0));
-                        parseMessage.put("messageText", writableMessage.getTextBody());
-                        parseMessage.put("sinchId", message.getMessageId());
-                        parseMessage.saveInBackground();
-
-                        messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_INCOMING);
+                    for (int i = 0; i < messageList.size(); i++) {
+                        WritableMessage message = new WritableMessage(messageList.get(i).get("recipientId").toString(), messageList.get(i).get("messageText").toString());
+                        if (messageList.get(i).get("senderId").toString().equals(currentUserId)) {
+                            messageAdapter.addMessage(message, MessageAdapter.DIRECTION_OUTGOING);
+                        } else {
+                            messageAdapter.addMessage(message, MessageAdapter.DIRECTION_INCOMING);
+                        }
                     }
                 }
             }
         });
     }
-}
 
-@Override
-public void onMessageSent(MessageClient client, Message message, String recipientId) {
+    private void sendMessage() {
+        messageBody = messageBodyField.getText().toString();
+        Toast.makeText(this,messageBody, Toast.LENGTH_LONG).show();
+        if (messageBody.isEmpty()) {
+            Toast.makeText(this, "Please enter a message", Toast.LENGTH_LONG).show();
+            return;
+        }
+
+        messageService.sendMessage(recipientId.toString(), messageBody);
+        messageBodyField.setText("");
+    }
+
+    @Override
+    public void onDestroy() {
+        messageService.removeMessageClientListener(messageClientListener);
+        unbindService(serviceConnection);
+        super.onDestroy();
+    }
+
+    private class MyServiceConnection implements ServiceConnection {
+        @Override
+        public void onServiceConnected(ComponentName componentName, IBinder iBinder) {
+            messageService = (MessageService.MessageServiceInterface) iBinder;
+            messageService.addMessageClientListener(messageClientListener);
+        }
+
+        @Override
+        public void onServiceDisconnected(ComponentName componentName) {
+            messageService = null;
+        }
+    }
+
+    private class MyMessageClientListener implements MessageClientListener {
+        @Override
+        public void onMessageFailed(MessageClient client, Message message,
+                                    MessageFailureInfo failureInfo) {
+            Toast.makeText(MessagingActivity.this, "Message failed to send.", Toast.LENGTH_LONG).show();
+        }
+
+        @Override
+        public void onIncomingMessage(MessageClient client, final Message message) {
+            if (message.getSenderId().equals(recipientId)) {
+                final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
+
+                //only add message to parse database if it doesn't already exist there
+                ParseQuery<ParseObject> query = ParseQuery.getQuery("ParseMessage");
+                query.whereEqualTo("sinchId", message.getMessageId());
+                query.findInBackground(new FindCallback<ParseObject>() {
+                    @Override
+                    public void done(List<ParseObject> messageList, com.parse.ParseException e) {
+                        if (e == null) {
+                            if (messageList.size() == 0) {
+                                ParseObject parseMessage = new ParseObject("ParseMessage");
+                                parseMessage.put("senderId", currentUserId);
+                                parseMessage.put("recipientId", writableMessage.getRecipientIds().get(0));
+                                parseMessage.put("messageText", writableMessage.getTextBody());
+                                parseMessage.put("sinchId", message.getMessageId());
+                                parseMessage.saveInBackground();
+
+                                messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_INCOMING);
+                            }
+                        }
+                    }
+                });
+            }
+        }
+
+        @Override
+        public void onMessageSent(MessageClient client, Message message, String recipientId) {
 
 
 
-    final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
-    messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_OUTGOING);
-}
+            final WritableMessage writableMessage = new WritableMessage(message.getRecipientIds().get(0), message.getTextBody());
+            messageAdapter.addMessage(writableMessage, MessageAdapter.DIRECTION_OUTGOING);
+        }
 
-@Override
-public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {}
+        @Override
+        public void onMessageDelivered(MessageClient client, MessageDeliveryInfo deliveryInfo) {}
 
-@Override
-public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
-}
+        @Override
+        public void onShouldSendPushData(MessageClient client, Message message, List<PushPair> pushPairs) {}
+    }
 }
